@@ -25,21 +25,27 @@ const tempp = fs.readFileSync(`${__dirname}/templates/product.html`, "utf-8");
 const dataObj = JSON.parse(data);
 const server = http.createServer((req, res) => {
   console.log(req.url);
-  const pathName = req.url;
+  const { query, pathname } = url.parse(req.url, true);
 
-  if (pathName === "/overview" || pathName === "/") {
+  if (pathname === "/overview" || pathname === "/") {
     res.writeHead(200, { "Content-type": "text/html" });
     const card = dataObj.map((el) => replaceTemplate(tempc, el)).join("");
     const output = tempo.replace(/{%PRODUCT_CARDS%}/g, card);
     res.end(output);
-  } else if (pathName === "/api") {
-    res.writeHead(200, { "Content-type": "application/json" });
-    const productNames = dataObj.map((item) => item.productName);
+  } else if (pathname === "/product") {
+    res.writeHead(200, { "Content-type": "text/html" });
+    const product = dataObj[query.id];
+    if (!product) {
+      res.writeHead(404, { "Content-type": "text/html" });
+      res.end("<h1>Product not found!</h1>");
+      return;
+    }
 
-    res.end(JSON.stringify(productNames));
+    const output = replaceTemplate(tempp, product);
+    res.end(output);
   }
 });
 
-server.listen(3000, "127.0.0.1", () => {
-  console.log("server is running on port 3000");
+server.listen(3001, "127.0.0.1", () => {
+  console.log("server is running on port 3001");
 });
