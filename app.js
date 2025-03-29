@@ -1,13 +1,45 @@
 const express = require('express');
 const fs = require('fs');
 const app = express();
+const morgan = require('morgan');
 app.use(express.json());
 
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf-8')
 );
+app.use(morgan('dev'));
 
-app.get('/api/v1/tours', (req, res) => {
+const getalluser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+
+    message: 'This route is not yet defined',
+  });
+};
+
+const updateuser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+
+    message: 'This route is not yet defined',
+  });
+};
+const deleteuser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+
+    message: 'This route is not yet defined',
+  });
+};
+const createuser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+
+    message: 'This route is not yet defined',
+  });
+};
+
+const getalltours = (req, res) => {
   res.status(200).json({
     results: tours.length,
     status: 'success',
@@ -15,7 +47,9 @@ app.get('/api/v1/tours', (req, res) => {
       tours: tours,
     },
   });
-});
+};
+
+app.get('/api/v1/tours', getalltours);
 
 app.get('/api/v1/tours/:id', (req, res) => {
   const id = req.params.id * 1;
@@ -94,6 +128,10 @@ app.delete('/api/v1/tours/:id', (req, res) => {
     data: null,
   });
 });
+
+app.route('/api/v1/user').get(getalluser).post(createuser);
+
+app.route('/api/v1/user/:id').patch(updateuser).delete(deleteuser);
 
 app.listen(3000, () => {
   console.log('Server started on port 3000');
